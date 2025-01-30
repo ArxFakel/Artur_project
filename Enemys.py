@@ -7,3 +7,6 @@ class Enemy():
         self.picture = pygame.transform.scale(self.picture,(100,150))
         self.hp = hp
         self.speed = speed
+
+    def scblt(self, screen):
+        screen.blit(screen,self.picture,(self.x,self.y))

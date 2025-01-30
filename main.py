@@ -148,7 +148,7 @@ for s_z in range(5):
     y_range += 115
     for n_z in range(9):
         x_range += 100
-        obj_nz = Object_lin(x=x_range,y=y_range,width=80,height=80,color=(230,0,20))
+        obj_nz = Object_lin(x=x_range,y=y_range,width=80,height=80,color=(230,0,20),empty=False)
         splin.append(obj_nz)
     x_range = 30
 print(splin)
@@ -279,10 +279,9 @@ while running: #while running == True
 
         screen.blit(sun_text_surface,(20,80)) # Отобразили текст на экране
         for d_kl in splin:
-            pygame.draw.rect(screen,(d_kl.color),(d_kl.x,d_kl.y,d_kl.width,d_kl.height))
-
+            d_kl.draw(screen)
         for z_kl in zsplin:
-            screen.blit(z_kl.picture,(z_kl.x , z_kl.y))
+            z_kl.scblt(screen)
 
     pygame.display.update()
 
