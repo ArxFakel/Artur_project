@@ -102,6 +102,25 @@ soln_x = random.randint(0,1180)
 soln_y = random.randint(0,650)
 soln_visible = True  # Добавляем переменную для отслеживания видимости объекта soln
 
+strplan = pygame.image.load("Picter/StrPlant.png")
+strplan = pygame.transform.scale(strplan,(1770,820))
+strplan_x = -70
+strplan_y = -330
+
+
+card_sunflo = pygame.image.load("Picter/card_sunflower_black.png")
+card_sunflo_x = 510
+card_sunflo_y = 30
+card_sunflo_st = True
+card_sunflo_rect = pygame.Rect(card_sunflo_x,card_sunflo_y,65,90)
+
+card_shoot = pygame.image.load("Picter/card_shooter_black.png")
+card_shoot_x = 570
+card_shoot_y = 30
+card_shoot_st = True
+card_shoot_rect = pygame.Rect(card_shoot_x,card_shoot_y,65,90)
+
+
 bat_a = pygame.image.load("Picter/bat-a.png")
 bat_a_x = 150
 bat_a_y = 50
@@ -148,7 +167,7 @@ for s_z in range(5):
     y_range += 115
     for n_z in range(9):
         x_range += 100
-        obj_nz = Object_lin(x=x_range,y=y_range,width=80,height=80,color=(230,0,20),empty=False)
+        obj_nz = Object_lin(x=x_range,y=y_range,width=80,height=80,color=(230,0,20),empty=True)
         splin.append(obj_nz)
     x_range = 30
 print(splin)
@@ -180,6 +199,9 @@ while running: #while running == True
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:#1
             pos = pygame.mouse.get_pos()
+            print(pos)
+
+
             if frame3 is not None: # Создали проверку работы процесса игры для активного фрейма
                 print("Вы в процессе игры")
                 if rect1.collidepoint(event.pos):
@@ -194,6 +216,36 @@ while running: #while running == True
                     print(point_for_soln)
                     sun_text = "Point: " + str(point_for_soln)
                     sun_text_surface = font_sun.render(sun_text, True, color_font_sun)
+
+                # Проверяем все клетки для растений
+                for cl_z in splin:#создали цикл for для проверки всех клеток collidepoint-ом
+                    if cl_z.rect.collidepoint(event.pos):#проверяем входит ли нажатие в collidepoint клетки
+                        if cl_z.empty==False:#проверка занята ли клетка
+                            print("Данная клетка уже занята")
+                        else :
+                            print("Данная клетка свободна")
+                        print("Вы в зоне отклика клетки")
+                print("Клетки напечатаны")
+
+                if card_sunflo_rect.collidepoint(event.pos):
+                    if card_sunflo_st == False:
+                        card_sunflo = pygame.image.load("Picter/card_sunflower.png")
+                        card_sunflo_st = True
+                    else :
+                        card_sunflo = pygame.image.load("Picter/card_sunflower_black.png")
+                        card_sunflo_st = False
+
+                if card_shoot_rect.collidepoint(event.pos):
+                    if card_shoot_st == False:
+                        card_shoot = pygame.image.load("Picter/card_shooter.png")
+                        card_shoot_st = True
+                    else :
+                        card_shoot = pygame.image.load("Picter/card_shooter_black.png")
+                        card_sunflo_st = False
+
+
+
+
 
 
             else:
@@ -235,6 +287,7 @@ while running: #while running == True
             else:
                 print("Мышь нажата но не активирована")
 
+
     screen.blit(background_image, (0, 0))
 
     if button_visible:
@@ -273,6 +326,14 @@ while running: #while running == True
         screen.blit(podsolnyh,(podsolnyh_x,podsolnyh_y))
 
         screen.blit(zombie.picture,(zombie.x,zombie.y))
+
+        screen.blit(strplan,(strplan_x,strplan_y))
+
+
+
+        screen.blit(card_sunflo,(card_sunflo_x,card_sunflo_y))
+
+        screen.blit(card_shoot,(card_shoot_x,card_shoot_y))
 
         if soln_visible and current_time > next_soln:
             screen.blit(soln,(soln_x,soln_y))

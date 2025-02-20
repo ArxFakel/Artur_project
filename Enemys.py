@@ -9,4 +9,4 @@ class Enemy():
         self.speed = speed
 
     def scblt(self, screen):
-        screen.blit(screen,self.picture,(self.x,self.y))
+        screen.blit(self.picture,(self.x,self.y))
