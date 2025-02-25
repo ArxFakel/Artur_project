@@ -1,3 +1,4 @@
+#Проект Артура
 import pygame
 import random
 from Object_Lines import Object_lin
