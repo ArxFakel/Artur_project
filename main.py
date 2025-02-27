@@ -121,6 +121,13 @@ card_shoot_y = 30
 card_shoot_st = True
 card_shoot_rect = pygame.Rect(card_shoot_x,card_shoot_y,65,90)
 
+card_vino = pygame.image.load("Picter/vino_card.png")
+card_vino= pygame.transform.scale(card_vino,(65,90))
+card_vino_x = 630
+card_vino_y = 30
+card_vino_st = True
+card_vino_rect = pygame.Rect(card_vino_x,card_vino_y,65,90)
+
 
 bat_a = pygame.image.load("Picter/bat-a.png")
 bat_a_x = 150
@@ -225,6 +232,8 @@ while running: #while running == True
                             print("Данная клетка уже занята")
                         else :
                             print("Данная клетка свободна")
+                            if cl_z ==True:
+                                podsolnyh
                         print("Вы в зоне отклика клетки")
                 print("Клетки напечатаны")
 
@@ -232,17 +241,25 @@ while running: #while running == True
                     if card_sunflo_st == False:
                         card_sunflo = pygame.image.load("Picter/card_sunflower.png")
                         card_sunflo_st = True
+                        print("Вы Выбрали Карту Подсолнуха")
+                        if card_sunflo_st == True:
+                            card_shoot_st = False
                     else :
                         card_sunflo = pygame.image.load("Picter/card_sunflower_black.png")
                         card_sunflo_st = False
+                        print("Вы Отменили свой выбор")
 
                 if card_shoot_rect.collidepoint(event.pos):
                     if card_shoot_st == False:
                         card_shoot = pygame.image.load("Picter/card_shooter.png")
                         card_shoot_st = True
+                        print("Вы Выбрали Карту Горохострела")
+                        if card_shoot_st == True :
+                            card_sunflo_st = False
                     else :
                         card_shoot = pygame.image.load("Picter/card_shooter_black.png")
-                        card_sunflo_st = False
+                        card_shoot_st = False
+                        print("Вы Отменили свой выбор")
 
 
 
@@ -288,7 +305,8 @@ while running: #while running == True
             else:
                 print("Мышь нажата но не активирована")
 
-
+#Конец цикла for-проверки событий
+#НАЧАЛО ОТОБРАЖЕНИЯ ЭЛЕМЕНТОВ
     screen.blit(background_image, (0, 0))
 
     if button_visible:
@@ -306,16 +324,8 @@ while running: #while running == True
     if frame3:
         frame3.draw()
 
-        if status_rect == False :
-           pygame.draw.rect(screen, (rect1_color), (rect1)) #вспомнили как создавать прямоугольную область на экране
-        if status_rect == True :
-            pygame.draw.rect(screen, (rect1_color2),(rect1))  # вспомнили как создавать прямоугольную область на экране
-        if status_rect == False :
-            pygame.draw.rect(screen,(rect1_color2),(rect2))
-        if status_rect == True :
-            pygame.draw.rect(screen, (rect1_color2),(rect2))
 
-        screen.blit(cannon1, (cannon1_x, cannon1_y))  # настроили изображение пушки на 3 фрейме
+
 
         # Выбираем текущее изображение в зависимости от текущего кадра
         bat_image = bat_a if bat_frame == 0 else bat_b
@@ -323,8 +333,6 @@ while running: #while running == True
         screen.blit(fire_bat.picture, (fire_bat.x, fire_bat.y))
 
         fire_bat.bat_move()
-
-        screen.blit(podsolnyh,(podsolnyh_x,podsolnyh_y))
 
         screen.blit(zombie.picture,(zombie.x,zombie.y))
 
@@ -336,15 +344,17 @@ while running: #while running == True
 
         screen.blit(card_shoot,(card_shoot_x,card_shoot_y))
 
-        if soln_visible and current_time > next_soln:
-            screen.blit(soln,(soln_x,soln_y))
+        screen.blit(card_vino,(card_vino_x,card_vino_y))
+
+
 
         screen.blit(sun_text_surface,(20,80)) # Отобразили текст на экране
-        for d_kl in splin:
+        for d_kl in splin:  #Выводим на экран клетки
             d_kl.draw(screen)
-        for z_kl in zsplin:
+        for z_kl in zsplin: #Выводим на экран зомби
             z_kl.scblt(screen)
-
+        if soln_visible and current_time > next_soln:
+            screen.blit(soln,(soln_x,soln_y))
     pygame.display.update()
 
 pygame.quit()
