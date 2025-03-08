@@ -121,7 +121,7 @@ card_shoot_y = 30
 card_shoot_st = True
 card_shoot_rect = pygame.Rect(card_shoot_x,card_shoot_y,65,90)
 
-card_vino = pygame.image.load("Picter/vino_card.png")
+card_vino = pygame.image.load("Picter/vino_card_black.png")
 card_vino= pygame.transform.scale(card_vino,(65,90))
 card_vino_x = 630
 card_vino_y = 30
@@ -244,6 +244,7 @@ while running: #while running == True
                         print("Вы Выбрали Карту Подсолнуха")
                         if card_sunflo_st == True:
                             card_shoot_st = False
+                            card_vino_st = False
                     else :
                         card_sunflo = pygame.image.load("Picter/card_sunflower_black.png")
                         card_sunflo_st = False
@@ -256,9 +257,23 @@ while running: #while running == True
                         print("Вы Выбрали Карту Горохострела")
                         if card_shoot_st == True :
                             card_sunflo_st = False
+                            card_vino_st = False
                     else :
                         card_shoot = pygame.image.load("Picter/card_shooter_black.png")
                         card_shoot_st = False
+                        print("Вы Отменили свой выбор")
+
+                if card_vino_rect.collidepoint(event.pos):
+                    if card_vino_st == False:
+                        card_vino = pygame.image.load("Picter/vino_card.png")
+                        card_vino_st = True
+                        print("Вы Выбрали Карту Виноградастрела")
+                        if card_vino_st == True :
+                            card_sunflo_st = False
+                            card_shoot_st = False
+                    else :
+                        card_vino = pygame.image.load("Picter/vino_card_black.png")
+                        card_vino_st = False
                         print("Вы Отменили свой выбор")
 
 
