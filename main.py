@@ -1,8 +1,9 @@
-#Проект Артура
 import pygame
 import random
 from Object_Lines import Object_lin
 from Enemys import Enemy
+from Plants import Plant
+
 pygame.init()  # инициализируем библиотеку pygame (программа синхронизируется с компьютером - настраивается звук, размер экрана и т.д)
 
 screen_width = 1280
@@ -44,7 +45,7 @@ class Frame():
     def draw(self):
         screen.blit(self.background_Frame, (self.x, self.y))
 
-randsp = [124,268,412,556,680]
+randsp = [124, 268, 412, 556, 680]
 
 class Fire_bat:
     def __init__(self, x, y, picture, speed):
@@ -57,16 +58,53 @@ class Fire_bat:
         if self.x > 200:
             self.x -= 0.1
 
-fire_bat = Fire_bat(x=1000, y=random.choice(randsp) , speed=0.1, picture="Picter/bat-a.png")  # Устанавливаем картинку для объекта класса (шаг 2)
+fire_bat = Fire_bat(x=1000, y=random.choice(randsp), speed=0.1, picture="Picter/bat-a.png")  # Устанавливаем картинку для объекта класса (шаг 2)
+
+
+def place_plant(flo, plant_type):
+    global point_for_soln
+
+
+    plant_cost = {
+        "sunflower": 50,
+        "shooter": 100,
+        "vino": 150
+    }
+
+
+    if flo.empty and point_for_soln >= plant_cost.get(plant_type, float('inf')):
+        # Создаем растение
+        if plant_type == "sunflower":
+            plant = Plant(x=flo.x, y=flo.y, picture="Picter/Podsolnyh.png")
+        elif plant_type == "shooter":
+            plant = Plant(x=flo.x, y=flo.y, picture="Picter/Cannon1.png")
+        elif plant_type == "vino":
+            plant = Plant(x=flo.x, y=flo.y, picture="Picter/vino_card.png")
+        else:
+            return False
+
+
+        flo.empty = False
+        flo.plant = plant
+
+        point_for_soln -= plant_cost[plant_type]
+
+        global sun_text, sun_text_surface
+        sun_text = "Point: " + str(point_for_soln)
+        sun_text_surface = font_sun.render(sun_text, True, color_font_sun)
+
+        return True
+    else:
+        return False
 
 def sun_spawn():
     pass
 
-font_sun = pygame.font.Font(None,36) # Создали переменную где сохраняется тип шрифта(None=arial)
+font_sun = pygame.font.Font(None, 36)  # Создали переменную где сохраняется тип шрифта(None=arial)
 
-sun_text = "Point: " + str(point_for_soln) # Создали переменную в которой сохраняется текст
-color_font_sun = (250,250,250) # Создали переменную в которой сохраняется цвет для текста
-sun_text_surface = font_sun.render(sun_text,True,color_font_sun) #Создали объект где сохраняется настроенный текст
+sun_text = "Point: " + str(point_for_soln)  # Создали переменную в которой сохраняется текст
+color_font_sun = (250, 250, 250)  # Создали переменную в которой сохраняется цвет для текста
+sun_text_surface = font_sun.render(sun_text, True, color_font_sun)  # Создали объект где сохраняется настроенный текст
 
 # Кнопки 1 фрейма (главное меню)
 buttonplay = Button(530, 100, 200, 50, "Играть", pygame.font.SysFont("Arial", 20), (255, 255, 255))
@@ -79,12 +117,12 @@ button_Skip_training = Button(530, 200, 200, 50, "Пропустить обуч�
 
 # Кнопки 3 фрейма (игровой процесс)
 button_start_game = Button(530, 300, 200, 50, "Начать игру", pygame.font.SysFont("Arial", 20), (255, 255, 255))
-imagepvz=pygame.draw.rect(screen,(255,179,0),(150,50,75,75))
+imagepvz = pygame.draw.rect(screen, (255, 179, 0), (150, 50, 75, 75))
 
 # Загружаем фоновые изображения
 background_image = pygame.image.load("Picter/PvZFon.png")
 background_Frame = pygame.image.load("Picter/Frame_1.png")
-background_image = pygame.transform.scale(background_image,(1280,720))
+background_image = pygame.transform.scale(background_image, (1280, 720))
 background_Frame3 = pygame.image.load("Picter/Pvz.png")
 
 # Песронажи/Структуры
@@ -92,42 +130,40 @@ cannon1 = pygame.image.load("Picter/Cannon1.png")
 cannon1_x = 1050  # задали x для изображения пушки на 3 фрейме
 cannon1_y = 10  # задали y для изображения пушки на 3 фрейме
 
-podsolnyh = pygame.image.load("Picter/Podsolnyh.png").convert_alpha()#Конвертировали изображение в Alpha-канал что бы убрать белый фон
-podsolnyh = pygame.transform.scale(podsolnyh,(80,88))# Изменили размер изображение в коде при помощи transfor.scale
+podsolnyh = pygame.image.load("Picter/Podsolnyh.png").convert_alpha()  # Конвертировали изображение в Alpha-канал что бы убрать белый фон
+podsolnyh = pygame.transform.scale(podsolnyh, (80, 88))  # Изменили размер изображение в коде при помощи transfor.scale
 podsolnyh_x = 220
 podsolnyh_y = 120
 
 soln = pygame.image.load("Picter/solnishko.png").convert_alpha()
-soln = pygame.transform.scale(soln,(80,88))
-soln_x = random.randint(0,1180)
-soln_y = random.randint(0,650)
+soln = pygame.transform.scale(soln, (80, 88))
+soln_x = random.randint(0, 1180)
+soln_y = random.randint(0, 650)
 soln_visible = True  # Добавляем переменную для отслеживания видимости объекта soln
 
 strplan = pygame.image.load("Picter/StrPlant.png")
-strplan = pygame.transform.scale(strplan,(1770,820))
+strplan = pygame.transform.scale(strplan, (1770, 820))
 strplan_x = -70
 strplan_y = -330
-
 
 card_sunflo = pygame.image.load("Picter/card_sunflower_black.png")
 card_sunflo_x = 510
 card_sunflo_y = 30
 card_sunflo_st = True
-card_sunflo_rect = pygame.Rect(card_sunflo_x,card_sunflo_y,65,90)
+card_sunflo_rect = pygame.Rect(card_sunflo_x, card_sunflo_y, 65, 90)
 
 card_shoot = pygame.image.load("Picter/card_shooter_black.png")
 card_shoot_x = 570
 card_shoot_y = 30
 card_shoot_st = True
-card_shoot_rect = pygame.Rect(card_shoot_x,card_shoot_y,65,90)
+card_shoot_rect = pygame.Rect(card_shoot_x, card_shoot_y, 65, 90)
 
 card_vino = pygame.image.load("Picter/vino_card_black.png")
-card_vino= pygame.transform.scale(card_vino,(65,90))
+card_vino = pygame.transform.scale(card_vino, (65, 90))
 card_vino_x = 630
 card_vino_y = 30
 card_vino_st = True
-card_vino_rect = pygame.Rect(card_vino_x,card_vino_y,65,90)
-
+card_vino_rect = pygame.Rect(card_vino_x, card_vino_y, 65, 90)
 
 bat_a = pygame.image.load("Picter/bat-a.png")
 bat_a_x = 150
@@ -143,10 +179,10 @@ cat = pygame.image.load("Picter/cat 2.png")
 cat_x = 500
 cat_y = 50
 
-rect1 = pygame.Rect(120,130,75,75)
-rect1_color = (255,179,0)
+rect1 = pygame.Rect(120, 130, 75, 75)
+rect1_color = (255, 179, 0)
 rect1_color2 = (255, 179, 0)
-rect2 = pygame.Rect(220,130,75,75)
+rect2 = pygame.Rect(220, 130, 75, 75)
 
 # Добавляем переменную для текущего кадра анимации
 bat_frame = 0
@@ -159,13 +195,13 @@ bat_y = 50
 bat_y2 = 50
 cat_G2 = 50
 
-zombie = Enemy(x=1000,y=350,picture=("Picter/zombie.png"),hp=120,speed=5000)
+zombie = Enemy(x=1000, y=350, picture=("Picter/zombie.png"), hp=120, speed=5000)
 
 y_zrange = 20
 zsplin = []
 for z_l in range(5):
     y_zrange += 115
-    zom_zl = Enemy(x=1000,y=y_zrange,picture=("Picter/zoombie.png"),hp=120,speed=5000)
+    zom_zl = Enemy(x=1000, y=y_zrange, picture=("Picter/zoombie.png"), hp=120, speed=5000)
     zsplin.append(zom_zl)
 
 x_range = 30
@@ -175,7 +211,7 @@ for s_z in range(5):
     y_range += 115
     for n_z in range(9):
         x_range += 100
-        obj_nz = Object_lin(x=x_range,y=y_range,width=80,height=80,color=(230,0,20),empty=True)
+        obj_nz = Object_lin(x=x_range, y=y_range, width=80, height=80, color=(230, 0, 20), empty=True)
         splin.append(obj_nz)
     x_range = 30
 print(splin)
@@ -197,27 +233,25 @@ frame3 = None
 running = True
 Logica_exit = True
 
-while running: #while running == True
-    current_time = pygame.time.get_ticks()#Создали переменную в которой сохраняется время от запуска(в миллисекундах
+while running:  # while running == True
+    current_time = pygame.time.get_ticks()  # Создали переменную в которой сохраняется время от запуска(в миллисекундах
     update_bat_frame()  # Вызываем функцию update_bat_frame
 
     for event in pygame.event.get():
-        #print(event)
+        # print(event)
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:#1
+        elif event.type == pygame.MOUSEBUTTONDOWN:  # 1
             pos = pygame.mouse.get_pos()
             print(pos)
 
-
-            if frame3 is not None: # Создали проверку работы процесса игры для активного фрейма
+            if frame3 is not None:  # Создали проверку работы процесса игры для активного фрейма
                 print("Вы в процессе игры")
                 if rect1.collidepoint(event.pos):
-                    rect1_color = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+                    rect1_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
                 if rect2.collidepoint(event.pos):
-                    rect1_color2 = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
+                    rect1_color2 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
-                # Проверяем нажатие на объект soln
                 if soln_visible and soln.get_rect(topleft=(soln_x, soln_y)).collidepoint(event.pos):
                     soln_visible = False
                     point_for_soln += 50
@@ -225,66 +259,65 @@ while running: #while running == True
                     sun_text = "Point: " + str(point_for_soln)
                     sun_text_surface = font_sun.render(sun_text, True, color_font_sun)
 
-                # Проверяем все клетки для растений
-                for cl_z in splin:#создали цикл for для проверки всех клеток collidepoint-ом
-                    if cl_z.rect.collidepoint(event.pos):#проверяем входит ли нажатие в collidepoint клетки
-                        if cl_z.empty==False:#проверка занята ли клетка
-                            print("Данная клетка уже занята")
-                        else :
-                            print("Данная клетка свободна")
-                            if cl_z ==True:
-                                podsolnyh
-                        print("Вы в зоне отклика клетки")
-                print("Клетки напечатаны")
-
                 if card_sunflo_rect.collidepoint(event.pos):
-                    if card_sunflo_st == False:
+                    if not card_sunflo_st:
+                        # Если карточка подсолнуха не выбрана, выбираем её
                         card_sunflo = pygame.image.load("Picter/card_sunflower.png")
                         card_sunflo_st = True
+                        card_shoot_st = False  # Сбрасываем выбор других карточек
+                        card_vino_st = False
                         print("Вы Выбрали Карту Подсолнуха")
-                        if card_sunflo_st == True:
-                            card_shoot_st = False
-                            card_vino_st = False
-                    else :
+                    else:
+                        # Если карточка подсолнуха уже выбрана, отменяем её выбор
                         card_sunflo = pygame.image.load("Picter/card_sunflower_black.png")
                         card_sunflo_st = False
-                        print("Вы Отменили свой выбор")
+                        print("Вы Отменили выбор Карты Подсолнуха")
 
                 if card_shoot_rect.collidepoint(event.pos):
-                    if card_shoot_st == False:
+                    if not card_shoot_st:
                         card_shoot = pygame.image.load("Picter/card_shooter.png")
                         card_shoot_st = True
+                        card_sunflo_st = False  # Сбрасываем выбор других карточек
+                        card_vino_st = False
                         print("Вы Выбрали Карту Горохострела")
-                        if card_shoot_st == True :
-                            card_sunflo_st = False
-                            card_vino_st = False
-                    else :
+                    else:
                         card_shoot = pygame.image.load("Picter/card_shooter_black.png")
                         card_shoot_st = False
-                        print("Вы Отменили свой выбор")
+                        print("Вы Отменили выбор Карты Горохострела")
 
                 if card_vino_rect.collidepoint(event.pos):
-                    if card_vino_st == False:
+                    if not card_vino_st:
                         card_vino = pygame.image.load("Picter/vino_card.png")
                         card_vino_st = True
+                        card_sunflo_st = False  # Сбрасываем выбор других карточек
+                        card_shoot_st = False
                         print("Вы Выбрали Карту Виноградастрела")
-                        if card_vino_st == True :
-                            card_sunflo_st = False
-                            card_shoot_st = False
-                    else :
+                    else:
                         card_vino = pygame.image.load("Picter/vino_card_black.png")
                         card_vino_st = False
-                        print("Вы Отменили свой выбор")
+                        print("Вы Отменили выбор Карты Виноградастрела")
 
-
-
-
-
+                for cl_z in splin:
+                    if cl_z.rect.collidepoint(event.pos):
+                        if card_vino_st:
+                            if place_plant(cl_z, "vino"):
+                                print("Вы вывели виноградастрела")
+                                card_vino_st = False
+                                card_vino = pygame.image.load("Picter/vino_card_black.png")
+                        elif card_sunflo_st:
+                            if place_plant(cl_z, "sunflower"):
+                                print("Вы выбрали подсолнух")
+                                card_sunflo_st = False
+                                card_sunflo = pygame.image.load("Picter/card_sunflower_black.png")
+                        elif card_shoot_st:
+                            if place_plant(cl_z, "shooter"):
+                                print("Вы выбрали горохострел")
+                                card_shoot_st = False
+                                card_shoot = pygame.image.load("Picter/card_shooter_black.png")
 
             else:
                 print("Вы не в процессе игры")
 
-            # Проверяем нажата ли кнопка play
             if buttonplay.is_clicked(pos):
                 screen.fill((0, 0, 0))
                 button_visible = False
@@ -295,15 +328,14 @@ while running: #while running == True
                 button_Skip_training = Button(530, 200, 200, 50, "Пропустить Обучение", pygame.font.SysFont("Arial", 20), (255, 255, 255))
                 buttonesc = Button(10, 10, 50, 50, "Esc", pygame.font.SysFont("Arial", 20), (255, 255, 255))
 
-            if button_Skip_training.is_clicked(pos):#Проверяем нажатали кнопка пропустить игру
+            if button_Skip_training.is_clicked(pos):  # Проверяем нажатали кнопка пропустить игру
                 print("Вы пропустили тренировку")
                 screen.fill((0, 0, 0))
                 button_visible = False
                 frame = None
                 frame3 = Frame(0, 0, 1280, 720, (100, 100, 100), background_Frame3)
                 next_soln = pygame.time.get_ticks() + 8000
-                print("Время в которое появляется солнце",str(next_soln))
-
+                print("Время в которое появляется солнце", str(next_soln))
 
             if buttonesc.is_clicked(pos):
                 print("Кнопка esc нажата")
@@ -320,8 +352,8 @@ while running: #while running == True
             else:
                 print("Мышь нажата но не активирована")
 
-#Конец цикла for-проверки событий
-#НАЧАЛО ОТОБРАЖЕНИЯ ЭЛЕМЕНТОВ
+    # Конец цикла for-проверки событий
+    # НАЧАЛО ОТОБРАЖЕНИЯ ЭЛЕМЕНТОВ
     screen.blit(background_image, (0, 0))
 
     if button_visible:
@@ -339,9 +371,6 @@ while running: #while running == True
     if frame3:
         frame3.draw()
 
-
-
-
         # Выбираем текущее изображение в зависимости от текущего кадра
         bat_image = bat_a if bat_frame == 0 else bat_b
 
@@ -349,27 +378,23 @@ while running: #while running == True
 
         fire_bat.bat_move()
 
-        screen.blit(zombie.picture,(zombie.x,zombie.y))
+        screen.blit(zombie.picture, (zombie.x, zombie.y))
 
-        screen.blit(strplan,(strplan_x,strplan_y))
+        screen.blit(strplan, (strplan_x, strplan_y))
 
+        screen.blit(card_sunflo, (card_sunflo_x, card_sunflo_y))
 
+        screen.blit(card_shoot, (card_shoot_x, card_shoot_y))
 
-        screen.blit(card_sunflo,(card_sunflo_x,card_sunflo_y))
+        screen.blit(card_vino, (card_vino_x, card_vino_y))
 
-        screen.blit(card_shoot,(card_shoot_x,card_shoot_y))
-
-        screen.blit(card_vino,(card_vino_x,card_vino_y))
-
-
-
-        screen.blit(sun_text_surface,(20,80)) # Отобразили текст на экране
-        for d_kl in splin:  #Выводим на экран клетки
+        screen.blit(sun_text_surface, (20, 80))  # Отобразили текст на экране
+        for d_kl in splin:  # Выводим на экран клетки
             d_kl.draw(screen)
-        for z_kl in zsplin: #Выводим на экран зомби
+        for z_kl in zsplin:  # Выводим на экран зомби
             z_kl.scblt(screen)
         if soln_visible and current_time > next_soln:
-            screen.blit(soln,(soln_x,soln_y))
+            screen.blit(soln, (soln_x, soln_y))
     pygame.display.update()
 
 pygame.quit()
