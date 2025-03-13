@@ -98,6 +98,12 @@ def place_plant(flo, plant_type):
         return False
 
 def sun_spawn():
+    global soln_visible,soln_y,soln_x,next_soln
+    soln_visible = True
+    soln_x = random.randint(0, 1180)
+    soln_y = random.randint(0, 650)
+    next_soln = pygame.time.get_ticks() + 8000
+
     pass
 
 font_sun = pygame.font.Font(None, 36)  # Создали переменную где сохраняется тип шрифта(None=arial)
@@ -335,7 +341,7 @@ while running:  # while running == True
                 button_visible = False
                 frame = None
                 frame3 = Frame(0, 0, 1280, 720, (100, 100, 100), background_Frame3)
-                next_soln = pygame.time.get_ticks() + 8000
+                next_soln = pygame.time.get_ticks() + 8000 # считаем время первого появление солнце
                 print("Время в которое появляется солнце", str(next_soln))
 
             if buttonesc.is_clicked(pos):
@@ -394,7 +400,9 @@ while running:  # while running == True
             d_kl.draw(screen)
         for z_kl in zsplin:  # Выводим на экран зомби
             z_kl.scblt(screen)
-        if soln_visible and current_time > next_soln:
+        if soln_visible == False and current_time > next_soln:
+            sun_spawn()
+        if soln_visible == True:
             screen.blit(soln, (soln_x, soln_y))
     pygame.display.update()
 
